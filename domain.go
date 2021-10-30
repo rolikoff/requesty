@@ -82,11 +82,14 @@ func getDomain(db *sql.DB, timestamp *int, name *string) (domain, error) {
 
 func getTopTenDomains(db *sql.DB, fromTimestamp, toTimeStamp int64) ([]domain, error) {
 	var domains []domain
+
 	// Top 10 domains last round minute (with several requests). If now 54min and 30 sec. We need stats for 53 minutes.
+	// HAVING was added since we want to show domains with requests.
 	rows, err := db.Query(
-		`SELECT name, SUM(counter) 
+		`SELECT name, SUM(counter) cSum 
 		   FROM domains WHERE timestamp >= ? AND timestamp < ? 
 		   GROUP BY name 
+		   HAVING cSum >= 1
 		   ORDER BY counter DESC 
 		   LIMIT 10`,
 		fromTimestamp, toTimeStamp)

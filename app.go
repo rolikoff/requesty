@@ -55,20 +55,32 @@ func (a *App) Dispose() {
 // The place where all app's routes and handlers are defined and initialzed.
 func (a *App) initializeRoutes() {
 	a.Router.POST("/domains", a.postCounterRoute)
-	a.Router.GET("/domains/statistics/last-minute", a.getDomainsStatisticsLastMinuteRoute)
-	a.Router.GET("/domains/statistics/last-hour", a.getDomainsStatisticsLastHourRoute)
+	a.Router.GET("/domains/statistics", a.getDomainsStatistics)
 }
 
 // The handler for GET route that returns top 10 most requested domains within last round minute.
-func (a *App) getDomainsStatisticsLastMinuteRoute(c *gin.Context) {
-	// getting current time.
-	t := time.Now()
-	// finding how much seconds passed since the last round minute
-	s := int64(t.Second())
-	// getting unix epoch time and substract the seconds to get last round minute.
-	ut := (t.Unix() - s)
+func (a *App) getDomainsStatistics(c *gin.Context) {
 
-	domains, err := getTopTenDomains(a.DB, ut-60, ut)
+	typeOfStats := c.Query("t")
+
+	var delta int64
+	var domains []domain
+	var err error
+
+	t := time.Now()
+	if typeOfStats == "minute" {
+		delta = 60
+	}
+
+	if typeOfStats == "hour" {
+		delta = 3600
+	}
+
+	toTime := (t.Unix() / delta) * delta
+	fromTime := toTime - delta
+
+	domains, err = getTopTenDomains(a.DB, fromTime, toTime)
+
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, err.Error())
 		return

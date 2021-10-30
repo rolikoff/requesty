@@ -21,8 +21,8 @@ Used to collect domain requests.
 
 Used to get top 10 domains requested in last round minute.
 
-[Show top 10 last round minute](#) `GET /domains/statistics/last-minute`
+[Show top 10 last round minute](#) `GET /domains/statistics?t=minute`
 
 Used to get top 10 domains requested in last round hour.
 
-[Show top 10 last round minute](#) `GET /domains/statistics/last-hour`
+[Show top 10 last round minute](#) `GET /domains/statistics?t=hour`

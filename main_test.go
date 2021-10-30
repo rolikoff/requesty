@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestStatisticsLastMinuteRequest(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/domains/statistics/last-minute", nil)
+	req, _ := http.NewRequest("GET", "/domains/statistics?t=minute", nil)
 	response := executeRequest(req)
 
 	if strings.Contains(response.Body.String(), "afterroundminute.com") || strings.Contains(response.Body.String(), "beforeroundminute.com") {
@@ -41,7 +41,7 @@ func TestStatisticsLastMinuteRequest(t *testing.T) {
 }
 
 func TestStatisticsLastHourRequest(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/domains/statistics/last-hour", nil)
+	req, _ := http.NewRequest("GET", "/domains/statistics?t=hour", nil)
 	response := executeRequest(req)
 
 	if strings.Contains(response.Body.String(), "afterroundhour.com") || strings.Contains(response.Body.String(), "beforeroundhour.com") {
